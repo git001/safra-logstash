@@ -1,0 +1,23 @@
+frontend public
+  bind :{{env "ROUTER_SERVICE_HTTP_PORT" "80"}}{{ if matchPattern "true|TRUE" (env "ROUTER_USE_PROXY_PROTOCOL" "") }} accept-proxy{{ end }}
+  mode http
+  tcp-request inspect-delay 5s
+  tcp-request content accept if HTTP
+...
+frontend public_ssl
+  bind :{{env "ROUTER_SERVICE_HTTPS_PORT" "443"}}{{ if matchPattern "true|TRUE" (env "ROUTER_USE_PROXY_PROTOCOL" "") }} accept-proxy{{ end }}
+  mode http
+  tcp-request  inspect-delay 5s
+  tcp-request content accept if { req_ssl_hello_type 1 }
+
+
+$ oc logs router-17-g8786
+I0919 19:59:21.459762       1 router.go:238] Router is including routes in all namespaces
+E0919 19:59:21.594985       1 ratelimiter.go:52] error reloading router: exit status 1
+[ALERT] 261/195921 (52) : Unable to use proxy 'be_no_sni' with wrong mode, required: http, has: tcp.
+[ALERT] 261/195921 (52) : You may want to use 'mode http'.
+[ALERT] 261/195921 (52) : Proxy 'public_ssl': unable to find required default_backend: 'be_no_sni'.
+[ALERT] 261/195921 (52) : Unable to use proxy 'be_sni' with wrong mode, required: http, has: tcp.
+[ALERT] 261/195921 (52) : You may want to use 'mode http'.
+[ALERT] 261/195921 (52) : Proxy 'public_ssl': unable to find required use_backend: 'be_sni'.
+[ALERT] 261/195921 (52) : Fatal errors found in configuration.
