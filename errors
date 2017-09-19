@@ -21,3 +21,21 @@ E0919 19:59:21.594985       1 ratelimiter.go:52] error reloading router: exit st
 [ALERT] 261/195921 (52) : You may want to use 'mode http'.
 [ALERT] 261/195921 (52) : Proxy 'public_ssl': unable to find required use_backend: 'be_sni'.
 [ALERT] 261/195921 (52) : Fatal errors found in configuration.
+
+
+oc logs -f router-interno-12-ml6rv
+I0919 20:13:21.212608       1 router.go:512] Router reloaded:
+[WARNING] 261/201321 (34) : parsing [/var/lib/haproxy/conf/haproxy.config:41] : 'option httplog' not usable with frontend 'public_ssl' (needs 'mode http'). Falling back to 'option tcplog'.
+ - Checking HAProxy /healthz on port 1936 ...
+ - HAProxy port 1936 health check ok : 0 retry attempt(s).
+I0919 20:13:21.212778       1 router.go:238] Router is including routes in all namespaces
+E0919 20:13:21.772609       1 ratelimiter.go:52] error reloading router: exit status 1
+[WARNING] 261/201321 (59) : parsing [/var/lib/haproxy/conf/haproxy.config:5508] : 'capture' ignored because backend 'be_edge_http_srvcanal-parceiros-ti_apl-api-servicos-canal-sxp5' has no frontend capability.
+[ALERT] 261/201321 (59) : parsing [/var/lib/haproxy/conf/haproxy.config:5508] : 'capture request' expects 'header' <header_name> 'len' <len>.
+[WARNING] 261/201321 (59) : parsing [/var/lib/haproxy/conf/haproxy.config:5514] : 'capture' ignored because backend 'be_edge_http_srvcanal-parceiros-ti_apl-api-servicos-canal-sxp5' has no frontend capability.
+[WARNING] 261/201321 (59) : parsing [/var/lib/haproxy/conf/haproxy.config:5622] : 'capture' ignored because backend 'be_edge_http_srvcanal-parceiros-ti_apl-servicos-log-c8fm' has no frontend capability.
+[ALERT] 261/201321 (59) : parsing [/var/lib/haproxy/conf/haproxy.config:5622] : 'capture request' expects 'header' <header_name> 'len' <len>.
+[WARNING] 261/201321 (59) : parsing [/var/lib/haproxy/conf/haproxy.config:5628] : 'capture' ignored because backend 'be_edge_http_srvcanal-parceiros-ti_apl-servicos-log-c8fm' has no frontend capability.
+[ALERT] 261/201321 (59) : Error(s) found in configuration file : /var/lib/haproxy/conf/haproxy.config
+[WARNING] 261/201321 (59) : parsing [/var/lib/haproxy/conf/haproxy.config:41] : 'option httplog' not usable with frontend 'public_ssl' (needs 'mode http'). Falling back to 'option tcplog'.
+[ALERT] 261/201321 (59) : Fatal errors found in configuration.
