@@ -137,12 +137,12 @@ frontend public_ssl
   bind :{{env "ROUTER_SERVICE_HTTPS_PORT" "443"}}{{ if matchPattern "true|TRUE" (env "ROUTER_USE_PROXY_PROTOCOL" "") }} accept-proxy{{ end }}
   tcp-request  inspect-delay 5s
   tcp-request content accept if { req_ssl_hello_type 1 }
-    capture request header X-Forwarded-For len 50
-    capture request header client-ip len 50
-    capture request header user-agent len 256
-    capture request header amc-work-id len 50
-    capture request header amc-message-id len 50
-    capture request header amc-session-id len 50
+#    capture request header X-Forwarded-For len 50
+#    capture request header client-ip len 50
+#    capture request header user-agent len 256
+#    capture request header amc-work-id len 50
+#    capture request header amc-message-id len 50
+#    capture request header amc-session-id len 50
 
   # if the connection is SNI and the route is a passthrough don't use the termination backend, just use the tcp backend
   acl sni req.ssl_sni -m found
@@ -297,6 +297,18 @@ backend be_edge_http_{{$cfgIdx}}
   tcp-request content reject if { src_http_req_rate ge {{ index $cfg.Annotations "haproxy.router.openshift.io/rate-limit-connections.rate-http" }} }
   {{ else }}
   #HTTP request rate not restricted
+  {{ end }}
+{{ end }}
+
+{{ with $cnList := index $cfg.Annotations "header-to-capture" }}
+  {{   if ne $cnList "" }}
+     capture request header {{ $cnList }}  len 50
+  {{ end }}
+{{ end }}
+
+{{ with $cnList := index $cfg.Annotations "header-to-capture-long" }}
+  {{   if ne $cnList "" }}
+     capture request header {{ $cnList }}  len 256
   {{ end }}
 {{ end }}
 
