@@ -135,6 +135,7 @@ frontend public
 # that terminates encryption in this router (edge)
 frontend public_ssl
   bind :{{env "ROUTER_SERVICE_HTTPS_PORT" "443"}}{{ if matchPattern "true|TRUE" (env "ROUTER_USE_PROXY_PROTOCOL" "") }} accept-proxy{{ end }}
+# mode http  
   tcp-request  inspect-delay 5s
   tcp-request content accept if { req_ssl_hello_type 1 }
 #    capture request header X-Forwarded-For len 50
@@ -391,6 +392,18 @@ backend be_tcp_{{$cfgIdx}}
   {{ end }}
 {{ end }}
 
+{{ with $cnList := index $cfg.Annotations "header-to-capture" }}
+  {{   if ne $cnList "" }}
+     capture request header {{ $cnList }}  len 50
+  {{ end }}
+{{ end }}
+
+{{ with $cnList := index $cfg.Annotations "header-to-capture-long" }}
+  {{   if ne $cnList "" }}
+     capture request header {{ $cnList }}  len 256
+  {{ end }}
+{{ end }}
+
   hash-type consistent
   timeout check 5000ms
     {{ range $serviceUnitName, $weight := $cfg.ServiceUnitNames }}
@@ -461,6 +474,18 @@ backend be_secure_{{$cfgIdx}}
   tcp-request content reject if { src_http_req_rate ge {{ index $cfg.Annotations "haproxy.router.openshift.io/rate-limit-connections.rate-http" }} }
   {{ else }}
   #HTTP request rate not restricted
+  {{ end }}
+{{ end }}
+
+{{ with $cnList := index $cfg.Annotations "header-to-capture" }}
+  {{   if ne $cnList "" }}
+     capture request header {{ $cnList }}  len 50
+  {{ end }}
+{{ end }}
+
+{{ with $cnList := index $cfg.Annotations "header-to-capture-long" }}
+  {{   if ne $cnList "" }}
+     capture request header {{ $cnList }}  len 256
   {{ end }}
 {{ end }}
 
