@@ -113,6 +113,19 @@ frontend public
   mode http
   tcp-request inspect-delay 5s
   tcp-request content accept if HTTP
+  
+{{ range $cfgIdxcap, $cfgcap := .State }}
+  {{ with $cnListcap := index $cfgcap.Annotations "haproxy.router.openshift.io/header-to-capture" }}
+    {{   if ne $cnListcap "" }}
+     capture request header {{ $cnListcap }}  len 50
+    {{   end }}
+  {{ end }}
+  {{ with $cnListcap := index $cfgcap.Annotations "haproxy.router.openshift.io/header-to-capture-long" }}
+    {{   if ne $cnListcap "" }}
+     capture request header {{ $cnListcap }}  len 256
+    {{   end }}
+  {{ end }}
+{{end }}
 
   # check if we need to redirect/force using https.
   acl secure_redirect base,map_reg(/var/lib/haproxy/conf/os_route_http_redirect.map) -m found
@@ -176,6 +189,19 @@ frontend fe_sni
   bind 127.0.0.1:{{env "ROUTER_SERVICE_SNI_PORT" "10444"}} ssl no-sslv3 {{ if gt (len .DefaultCertificate) 0 }}crt {{.DefaultCertificate}}{{ else }}crt /var/lib/haproxy/conf/default_pub_keys.pem{{ end }} crt-list /var/lib/haproxy/conf/cert_config.map accept-proxy
   mode http
 
+{{ range $cfgIdxcap, $cfgcap := .State }}
+  {{ with $cnListcap := index $cfgcap.Annotations "haproxy.router.openshift.io/header-to-capture" }}
+    {{   if ne $cnListcap "" }}
+     capture request header {{ $cnListcap }}  len 50
+    {{   end }}
+  {{ end }}
+  {{ with $cnListcap := index $cfgcap.Annotations "haproxy.router.openshift.io/header-to-capture-long" }}
+    {{   if ne $cnListcap "" }}
+     capture request header {{ $cnListcap }}  len 256
+    {{   end }}
+  {{ end }}
+{{end }}
+
   # check re-encrypt backends first - from most specific to general path.
   acl reencrypt base,map_reg(/var/lib/haproxy/conf/os_reencrypt.map) -m found
 
@@ -209,6 +235,19 @@ frontend fe_no_sni
   # terminate ssl on edge
   bind 127.0.0.1:{{env "ROUTER_SERVICE_NO_SNI_PORT" "10443"}} ssl no-sslv3 {{ if gt (len .DefaultCertificate) 0 }}crt {{.DefaultCertificate}}{{ else }}crt /var/lib/haproxy/conf/default_pub_keys.pem{{ end }} accept-proxy
   mode http
+
+{{ range $cfgIdxcap, $cfgcap := .State }}
+  {{ with $cnListcap := index $cfgcap.Annotations "haproxy.router.openshift.io/header-to-capture" }}
+    {{   if ne $cnListcap "" }}
+     capture request header {{ $cnListcap }}  len 50
+    {{   end }}
+  {{ end }}
+  {{ with $cnListcap := index $cfgcap.Annotations "haproxy.router.openshift.io/header-to-capture-long" }}
+    {{   if ne $cnListcap "" }}
+     capture request header {{ $cnListcap }}  len 256
+    {{   end }}
+  {{ end }}
+{{end }}
 
   # check re-encrypt backends first - path or host based.
   acl reencrypt base,map_reg(/var/lib/haproxy/conf/os_reencrypt.map) -m found
